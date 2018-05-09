@@ -1,10 +1,13 @@
 node {
     def app
 
-    stage('Clone repository') {
-        /* Let's make sure we have the repository cloned to our workspace */
-
-        checkout scm
+    stage ('Checkout') {
+      deleteDir()
+      checkout scm
+      GIT_VERSION = sh (
+        script: 'git describe --tags',
+        returnStdout:true
+      ).trim()
     }
 
     stage('Build image') {
