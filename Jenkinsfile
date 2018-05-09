@@ -3,11 +3,7 @@ node {
 
     stage ('Checkout') {
       deleteDir()
-      checkout scm
-      GIT_VERSION = sh (
-        script: 'git describe --tags',
-        returnStdout:true
-      ).trim()
+      sh git clone https://github.com/hgsat123/hellonode.git
     }
 
     stage('Build image') {
