@@ -1,23 +1,33 @@
 node {
-    def app
+    def buildEnv
+    def appName = 'hellonode'
+    def devAddress
+    def registry = "172.31.17.242:5000"
+    def imageNm = "${appName}:${env.BUILD_NUMBER}"
+    def imageTag = "$registry/${imageNm}"
 
-    stage ('Checkout') {
-      deleteDir()
-      sh git clone https://github.com/hgsat123/hellonode.git
+    stage('Clone repository') {
+        /* Let's make sure we have the repository cloned to our workspace */
+
+        checkout scm
+        GIT_VERSION = sh (
+          script: git describe --tags',
+          returnStdout: true
+        ).trim()
     }
 
     stage('Build image') {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
 
-        app = docker.build("hgsat123/hellonode")
+        buildEnv = docker.build("${imageNm}")
     }
 
     stage('Test image') {
         /* Ideally, we would run a test framework against our image.
          * For this example, we're using a Volkswagen-type approach ;-) */
 
-        app.inside {
+        buildEnv.inside {
             sh 'echo "Tests passed"'
         }
     }
@@ -25,7 +35,7 @@ node {
     stage('Scan image') {
         /* Scan the docker image.    
         
-        def imageLine = IMAGE + ' ' + env.WORKSPACE + '/DockerFile'
+        def imageLine = "${imageNm}" + ' ' + env.WORKSPACE + '/DockerFile'
         writeFile file: 'anchore_images', text: imageLine
         anchore name: 'anchore_images', policyName: 'anchore_policy', bailOnFail: false, inputQueries: [[query: 'list-packages all'], [query: 'cve-scan all']]
 
@@ -37,10 +47,6 @@ node {
          * Second, the 'latest' tag.
          * Pushing multiple tags is cheap, as all the layers are reused. */
 #        docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-         docker.withRegistry('172.31.17.242:5000') {
-          
-            app.push("${env.BUILD_NUMBER}")
-            app.push("latest")
-        }
-    }
+         sh("docker tag ${imageNM} ${imageTag}")
+         sh("docker push ${imageTag}")
 }
