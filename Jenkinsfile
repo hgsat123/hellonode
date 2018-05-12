@@ -31,7 +31,7 @@ node {
     stage('Scan image') {
         /* Scan the docker image.    
         
-        def imageLine = '${imageNm}'
+        def imageLine = 'debian:latest'
         writeFile file: 'anchore_images', text: imageLine
         anchore name: 'anchore_images', policyName: 'anchore_policy', bailOnFail: false, inputQueries: [[query: 'list-packages all'], [query: 'cve-scan all']]
 
