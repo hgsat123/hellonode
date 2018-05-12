@@ -31,7 +31,7 @@ node {
     stage('Scan image') {
         /* Scan the docker image.    
         
-        def imageLine = 'debian:latest'
+        def imageLine = "${imageNm}"
         writeFile file: 'anchore_images', text: imageLine
         anchore name: 'anchore_images', policyName: 'anchore_policy', bailOnFail: false, inputQueries: [[query: 'list-packages all'], [query: 'cve-scan all']]
 
@@ -42,7 +42,7 @@ node {
          * First, the incremental build number from Jenkins
          * Second, the 'latest' tag.
          * Pushing multiple tags is cheap, as all the layers are reused. */
-         sh("docker tag ${imageNM} ${imageTag}")
+         sh("docker tag ${imageNm} ${imageTag}")
          sh("docker push ${imageTag}")
     }
 }
