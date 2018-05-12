@@ -33,7 +33,7 @@ node {
         
         def imageLine = 'debian:latest'
         writeFile file: 'anchore_images', text: imageLine
-        anchore name: 'anchore_images', policyName: 'anchore_policy', bailOnFail: false, inputQueries: [[query: 'list-packages all'], [query: 'cve-scan all']]
+        anchore name: 'anchore_images', inputQueries: [[query: 'cve-scan all'], [query: 'list-packages all'], [query: 'list-files all'], [query: 'show-pkg-diffs base']]
 
     }
 
