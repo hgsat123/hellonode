@@ -29,7 +29,7 @@ node {
     }
 
     stage('Scan image') {
-        /* Scan the docker image.    
+        /* Scan the docker image */
         
         def imageLine = "${imageNm}"
         writeFile file: 'anchore_images', text: imageLine
