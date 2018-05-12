@@ -35,13 +35,4 @@ node {
         writeFile file: 'anchore_images', text: imageLine
         anchore name: 'anchore_images', policyName: 'anchore_policy', bailOnFail: false, inputQueries: [[query: 'list-packages all'], [query: 'cve-scan all']]
     }
-
-    stage('Push image') {
-        /* Finally, we'll push the image with two tags:
-         * First, the incremental build number from Jenkins
-         * Second, the 'latest' tag.
-         * Pushing multiple tags is cheap, as all the layers are reused. */
-         sh("docker tag ${imageNm} ${imageTag}")
-         sh("docker push ${imageTag}")
-    }
 }
