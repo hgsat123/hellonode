@@ -31,10 +31,9 @@ node {
     stage('Scan image') {
         /* Scan the docker image */
         
-        def imageLine = "${imageNm}"
+        def imageLine = "${imageNm}" + ' ' + env.WORKSPACE + '/DockerFile'
         writeFile file: 'anchore_images', text: imageLine
-        anchore name: 'anchore_images', inputQueries: [[query: 'cve-scan all'], [query: 'list-packages all'], [query: 'list-files all'], [query: 'show-pkg-diffs base']]
-
+        anchore name: 'anchore_images', policyName: 'anchore_policy', bailOnFail: false, inputQueries: [[query: 'list-packages all'], [query: 'cve-scan all']]
     }
 
     stage('Push image') {
